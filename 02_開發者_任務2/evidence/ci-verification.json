@@ -1,0 +1,227 @@
+[
+  {
+    "conclusion": "success",
+    "databaseId": 44133028576,
+    "event": "push",
+    "headSha": "b7b61c4b2fed042c4746d9c874a9a11ae3b4fe31",
+    "jobs": [
+      {
+        "completedAt": "2026-11-17T17:05:13Z",
+        "conclusion": "success",
+        "databaseId": 134214977132,
+        "name": "staging-secret-check",
+        "startedAt": "2026-11-17T17:05:10Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-17T17:05:10Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-17T17:05:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:10Z",
+            "conclusion": "success",
+            "name": "Verify staging secret injection without disclosure",
+            "number": 2,
+            "startedAt": "2026-11-17T17:05:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:10Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 3,
+            "startedAt": "2026-11-17T17:05:10Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/hambur0427/a10-leakguard/actions/runs/44133028576/job/134214977132"
+      },
+      {
+        "completedAt": "2026-11-17T17:05:17Z",
+        "conclusion": "success",
+        "databaseId": 134214977642,
+        "name": "test",
+        "startedAt": "2026-11-17T17:05:09Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-17T17:05:10Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-17T17:05:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:11Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7",
+            "number": 2,
+            "startedAt": "2026-11-17T17:05:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:11Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@v7",
+            "number": 3,
+            "startedAt": "2026-11-17T17:05:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:15Z",
+            "conclusion": "success",
+            "name": "Install dependencies",
+            "number": 4,
+            "startedAt": "2026-11-17T17:05:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:16Z",
+            "conclusion": "success",
+            "name": "Run tests",
+            "number": 5,
+            "startedAt": "2026-11-17T17:05:15Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:16Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@v7",
+            "number": 9,
+            "startedAt": "2026-11-17T17:05:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:16Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7",
+            "number": 10,
+            "startedAt": "2026-11-17T17:05:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:16Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-11-17T17:05:16Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/hambur0427/a10-leakguard/actions/runs/44133028576/job/134214977642"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/hambur0427/a10-leakguard/actions/runs/44133028576",
+    "pytest_summaries": [
+      "33 passed in 0.35s"
+    ],
+    "secret_success_message_present": true,
+    "log_handling": "Only test summary and job metadata retained; raw environment logs not published."
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 44133092959,
+    "event": "pull_request",
+    "headSha": "b7b61c4b2fed042c4746d9c874a9a11ae3b4fe31",
+    "jobs": [
+      {
+        "completedAt": "2026-11-17T17:05:40Z",
+        "conclusion": "success",
+        "databaseId": 134215198497,
+        "name": "test",
+        "startedAt": "2026-11-17T17:05:29Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-17T17:05:30Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-17T17:05:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:31Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7",
+            "number": 2,
+            "startedAt": "2026-11-17T17:05:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:31Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@v7",
+            "number": 3,
+            "startedAt": "2026-11-17T17:05:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:37Z",
+            "conclusion": "success",
+            "name": "Install dependencies",
+            "number": 4,
+            "startedAt": "2026-11-17T17:05:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:38Z",
+            "conclusion": "success",
+            "name": "Run tests",
+            "number": 5,
+            "startedAt": "2026-11-17T17:05:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:38Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@v7",
+            "number": 9,
+            "startedAt": "2026-11-17T17:05:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:39Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7",
+            "number": 10,
+            "startedAt": "2026-11-17T17:05:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-17T17:05:39Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-11-17T17:05:39Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/hambur0427/a10-leakguard/actions/runs/44133092959/job/134215198497"
+      },
+      {
+        "completedAt": "2026-11-17T17:05:27Z",
+        "conclusion": "skipped",
+        "databaseId": 134215201215,
+        "name": "staging-secret-check",
+        "startedAt": "2026-11-17T17:05:27Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/hambur0427/a10-leakguard/actions/runs/44133092959/job/134215201215"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/hambur0427/a10-leakguard/actions/runs/44133092959",
+    "pytest_summaries": [
+      "33 passed in 0.37s"
+    ],
+    "secret_success_message_present": false,
+    "log_handling": "Only test summary and job metadata retained; raw environment logs not published."
+  }
+]
