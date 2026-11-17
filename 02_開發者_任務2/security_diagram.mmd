@@ -1,0 +1,39 @@
+flowchart LR
+  subgraph U[信任邊界：使用者端]
+    USERS[member / repo_owner / admin]
+    COOKIE[已實作：Flask 簽章 cookie]
+  end
+  subgraph A[信任邊界：LeakGuard 原型]
+    WEB[已實作：Web API 與示範登入]
+    AUTH[已實作：登入 CSRF 開關 RBAC repo 範圍]
+    FLAGS[已實作：flags.json]
+    MEM[已實作：通報與 audit 記憶體儲存]
+    ENV[已實作：環境變數讀取 SECRET_KEY]
+  end
+  subgraph G[信任邊界：GitHub]
+    REPO[Repository / PR]
+    BOT[Dependabot：pip / Actions]
+    TEST[CI test：無環境機密]
+    SECRET[staging Secrets：SECRET_KEY 已存在]
+    CHECK[可信 push 機密檢查：無 checkout 無 repo 程式]
+    PROTECT[待管理員確認：Secret Scanning / Push Protection]
+  end
+  subgraph P[未來規劃：未部署]
+    LOGIN[正式 OAuth / server-side session]
+    DB[持久化 audit]
+    THIRD[通知與第三方撤銷 API]
+    DEPLOY[production / 部署機密注入]
+  end
+  USERS --> COOKIE --> WEB --> AUTH
+  FLAGS --> AUTH --> MEM
+  ENV --> WEB
+  REPO --> TEST
+  REPO --> BOT
+  SECRET -->|機密：只在可信 push 注入| CHECK
+  REPO --> PROTECT
+  WEB -.-> LOGIN
+  MEM -.-> DB
+  AUTH -.-> THIRD
+  SECRET -.-> DEPLOY -.-> ENV
+  classDef planned fill:#fff5e5,stroke:#ab6b13;
+  class LOGIN,DB,THIRD,DEPLOY,PROTECT planned;

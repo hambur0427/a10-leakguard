@@ -186,3 +186,48 @@ def test_audit_records_success_and_denial(app):
 def test_audit_admin_only(app):
     c, _ = login(app, "bob")
     assert c.get("/admin/audit").status_code == 403
+
+
+# Task 2: direct API requests must enforce access, independently of the UI.
+@pytest.mark.parametrize("path", ["/alerts", "/api/notifications", "/admin/audit"])
+def test_anonymous_read_endpoints_rejected(app, path):
+    assert app.test_client().get(path).status_code == 401
+
+
+@pytest.mark.parametrize("token", [None, "incorrect-csrf-token"])
+@pytest.mark.parametrize("path", ["/alerts/1/revoke", "/admin/flags/one_click_revoke"])
+def test_invalid_csrf_never_mutates_state(app, token, path):
+    c, _ = login(app, "alice")
+    before = flags.load_flags()
+    headers = {} if token is None else {"X-CSRF-Token": token}
+    r = c.post(path, json={"enabled": False}, headers=headers)
+    assert r.status_code == 403
+    assert flags.load_flags() == before
+    assert app.alerts[0]["status"] == "open"
+
+
+def test_owner_notification_api_filters_other_repositories(app):
+    assert set(channels(app, "bob")) == {1, 2, 3}
+    assert set(channels(app, "chen")) == {4, 5}
+
+
+def test_off_denial_is_audited_without_mutation(app):
+    set_flag(flags.FLAGS_PATH, "one_click_revoke", enabled=False)
+    c, t = login(app, "bob")
+    assert post_revoke(c, t, 1).status_code == 404
+    assert app.alerts[0]["status"] == "open"
+    assert app.audit[-1]["action"] == "revoke_denied"
+    assert app.audit[-1]["reason"] == "flag_off"
+
+
+def test_environment_key_and_cookie_configuration(monkeypatch):
+    # An ephemeral test value, not a production credential.
+    import secrets
+    key = secrets.token_hex(32)
+    monkeypatch.setenv("SECRET_KEY", key)
+    monkeypatch.setenv("COOKIE_SECURE", "1")
+    instance = create_app()
+    assert instance.secret_key == key
+    assert instance.config["SESSION_COOKIE_HTTPONLY"] is True
+    assert instance.config["SESSION_COOKIE_SAMESITE"] == "Lax"
+    assert instance.config["SESSION_COOKIE_SECURE"] is True
