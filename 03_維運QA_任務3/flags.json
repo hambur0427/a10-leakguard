@@ -1,0 +1,16 @@
+{
+  "one_click_revoke": {
+    "enabled": true,
+    "rollout": 100,
+    "type": "experiment",
+    "owner": "維運/QA",
+    "expires": "2026-12-15"
+  },
+  "severity_notify": {
+    "enabled": true,
+    "rollout": 100,
+    "type": "experiment",
+    "owner": "維運/QA",
+    "expires": "2026-12-15"
+  }
+}

@@ -1,0 +1,91 @@
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans CJK TC, Microsoft JhengHei, sans-serif" font-size="14">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+  <rect width="960" height="600" fill="#ffffff"/>
+  <text x="480" y="28" text-anchor="middle" font-size="18" font-weight="bold">LeakGuard 安全架構圖</text>
+
+  <!-- Trust boundary 1: user side -->
+  <rect x="20" y="50" width="170" height="300" rx="10" fill="#f4f6f8" stroke="#7f8c8d" stroke-dasharray="6,4"/>
+  <text x="105" y="72" text-anchor="middle" fill="#555">信任邊界 1：使用者端</text>
+  <rect x="40" y="90" width="130" height="60" rx="6" fill="#fff" stroke="#333"/>
+  <text x="105" y="115" text-anchor="middle">repo 負責人</text>
+  <text x="105" y="135" text-anchor="middle" font-size="12" fill="#555">repo_owner</text>
+  <rect x="40" y="170" width="130" height="60" rx="6" fill="#fff" stroke="#333"/>
+  <text x="105" y="195" text-anchor="middle">一般成員</text>
+  <text x="105" y="215" text-anchor="middle" font-size="12" fill="#555">member</text>
+  <rect x="40" y="250" width="130" height="60" rx="6" fill="#fff" stroke="#333"/>
+  <text x="105" y="275" text-anchor="middle">管理員</text>
+  <text x="105" y="295" text-anchor="middle" font-size="12" fill="#555">admin</text>
+
+  <!-- Trust boundary 2: LeakGuard -->
+  <rect x="270" y="50" width="400" height="400" rx="10" fill="#eef6ee" stroke="#27ae60" stroke-dasharray="6,4"/>
+  <text x="470" y="72" text-anchor="middle" fill="#1e7a46">信任邊界 2：LeakGuard 伺服器</text>
+  <rect x="295" y="90" width="350" height="64" rx="6" fill="#fff" stroke="#333"/>
+  <text x="470" y="116" text-anchor="middle">Web / API（HTTPS）</text>
+  <text x="470" y="138" text-anchor="middle" font-size="12" fill="#555">伺服器端 session：HttpOnly、Secure、SameSite</text>
+  <rect x="295" y="170" width="350" height="64" rx="6" fill="#fff" stroke="#c0392b" stroke-width="2"/>
+  <text x="470" y="196" text-anchor="middle">授權檢查（每個請求）</text>
+  <text x="470" y="218" text-anchor="middle" font-size="12" fill="#555">①登入 ②開關 ③角色 ④擁有者</text>
+  <rect x="295" y="250" width="165" height="64" rx="6" fill="#fff" stroke="#333"/>
+  <text x="377" y="278" text-anchor="middle">功能開關</text>
+  <text x="377" y="298" text-anchor="middle" font-size="12" fill="#555">flags.json</text>
+  <rect x="480" y="250" width="165" height="64" rx="6" fill="#fff" stroke="#333"/>
+  <text x="562" y="278" text-anchor="middle">通知分級</text>
+  <text x="562" y="298" text-anchor="middle" font-size="12" fill="#555">severity_notify</text>
+  <rect x="295" y="330" width="165" height="64" rx="6" fill="#fff" stroke="#333"/>
+  <text x="377" y="358" text-anchor="middle">稽核紀錄</text>
+  <text x="377" y="378" text-anchor="middle" font-size="12" fill="#555">誰、何時、撤銷什麼</text>
+  <rect x="480" y="330" width="165" height="64" rx="6" fill="#fff" stroke="#333"/>
+  <text x="562" y="358" text-anchor="middle">撤銷執行</text>
+  <text x="562" y="378" text-anchor="middle" font-size="12" fill="#555">one_click_revoke</text>
+  <rect x="295" y="405" width="350" height="36" rx="6" fill="#fff" stroke="#333"/>
+  <text x="470" y="428" text-anchor="middle" font-size="13">環境變數（執行時注入，不寫入程式碼）</text>
+
+  <!-- Trust boundary 3: external -->
+  <rect x="750" y="50" width="190" height="400" rx="10" fill="#f4f6fb" stroke="#2980b9" stroke-dasharray="6,4"/>
+  <text x="845" y="72" text-anchor="middle" fill="#1f5f8b">信任邊界 3：外部服務</text>
+  <rect x="770" y="90" width="150" height="70" rx="6" fill="#fff" stroke="#333"/>
+  <text x="845" y="116" text-anchor="middle">GitHub</text>
+  <text x="845" y="136" text-anchor="middle" font-size="12" fill="#555">OAuth / OIDC</text>
+  <text x="845" y="152" text-anchor="middle" font-size="12" fill="#555">secret scanning</text>
+  <rect x="770" y="300" width="150" height="70" rx="6" fill="#fff" stroke="#333"/>
+  <text x="845" y="327" text-anchor="middle">各服務撤銷 API</text>
+  <text x="845" y="347" text-anchor="middle" font-size="12" fill="#555">雲端、第三方金鑰</text>
+  <rect x="770" y="185" width="150" height="70" rx="6" fill="#fff" stroke="#333"/>
+  <text x="845" y="212" text-anchor="middle">通知管道</text>
+  <text x="845" y="232" text-anchor="middle" font-size="12" fill="#555">Email、推播</text>
+
+  <!-- Secrets pipeline -->
+  <rect x="270" y="480" width="670" height="100" rx="10" fill="#fdf3f2" stroke="#c0392b" stroke-dasharray="6,4"/>
+  <text x="605" y="502" text-anchor="middle" fill="#a93226">機密流向（紅色）</text>
+  <rect x="295" y="515" width="170" height="50" rx="6" fill="#fff" stroke="#c0392b"/>
+  <text x="380" y="545" text-anchor="middle">GitHub Secrets</text>
+  <rect x="520" y="515" width="170" height="50" rx="6" fill="#fff" stroke="#c0392b"/>
+  <text x="605" y="545" text-anchor="middle">CI/CD（Actions）</text>
+  <rect x="745" y="515" width="170" height="50" rx="6" fill="#fff" stroke="#c0392b"/>
+  <text x="830" y="545" text-anchor="middle">部署環境變數</text>
+  <line x1="465" y1="540" x2="518" y2="540" stroke="#c0392b" stroke-width="2" marker-end="url(#s)"/>
+  <line x1="690" y1="540" x2="743" y2="540" stroke="#c0392b" stroke-width="2" marker-end="url(#s)"/>
+  <path d="M830,515 C830,470 700,470 640,430" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#s)"/>
+
+  <!-- Normal flows -->
+  <line x1="170" y1="120" x2="293" y2="122" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="170" y1="200" x2="293" y2="130" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="170" y1="280" x2="293" y2="140" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="215" y="108" font-size="12" fill="#555">HTTPS</text>
+  <line x1="470" y1="154" x2="470" y2="168" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="470" y1="234" x2="377" y2="248" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="470" y1="234" x2="562" y2="248" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="420" y1="314" x2="520" y2="328" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="480" y1="362" x2="462" y2="362" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="645" y1="115" x2="768" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="680" y="100" font-size="12" fill="#555">登入</text>
+  <line x1="645" y1="352" x2="768" y2="338" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="645" y1="282" x2="768" y2="225" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+</svg>

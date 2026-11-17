@@ -1,0 +1,32 @@
+# 放到 repo 的 .github/workflows/ci.yml
+# 示範：機密由 GitHub Secrets 在執行時注入，不寫在程式碼裡。
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: staging   # 使用 staging 環境專屬的 secrets
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r 03_維運QA_任務3/requirements.txt
+
+      - name: Run tests
+        working-directory: 03_維運QA_任務3
+        env:
+          # 由 GitHub Secrets 注入；log 中會自動遮蔽
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run: pytest -q
