@@ -1,11 +1,10 @@
-# 放到 repo 的 .github/workflows/ci.yml
-# 示範：機密由 GitHub Secrets 在執行時注入，不寫在程式碼裡。
 name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'task2/**']
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,11 +12,12 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    environment: staging   # 使用 staging 環境專屬的 secrets
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -26,7 +26,23 @@ jobs:
 
       - name: Run tests
         working-directory: 03_維運QA_任務3
-        env:
-          # 由 GitHub Secrets 注入；log 中會自動遮蔽
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: pytest -q
+
+  # Only trusted pushes receive the environment secret. No checkout, dependencies,
+  # or repository/PR code execute in this job, and the value is never printed.
+  staging-secret-check:
+    if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions: {}
+    environment: staging
+    steps:
+      - name: Verify staging secret injection without disclosure
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        shell: bash
+        run: |
+          if [ -z "$SECRET_KEY" ]; then
+            echo "::error::staging SECRET_KEY is missing"
+            exit 1
+          fi
+          echo "staging SECRET_KEY is available (value not displayed)"
