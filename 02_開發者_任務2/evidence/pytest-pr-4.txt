@@ -1,0 +1,31 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0 -- <workspace>\work\report-env\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <workspace>\work\pr-4-verification
+collecting ... collected 23 items
+
+test_leakguard.py::test_kill_switch_off_for_everyone PASSED              [  4%]
+test_leakguard.py::test_rollout_100_on_and_0_off PASSED                  [  8%]
+test_leakguard.py::test_same_user_always_same_group PASSED               [ 13%]
+test_leakguard.py::test_rollout_roughly_matches_percentage PASSED        [ 17%]
+test_leakguard.py::test_unknown_flag_is_off PASSED                       [ 21%]
+test_leakguard.py::test_on_owner_can_revoke_own_repo PASSED              [ 26%]
+test_leakguard.py::test_on_owner_cannot_revoke_other_repo PASSED         [ 30%]
+test_leakguard.py::test_on_member_cannot_revoke PASSED                   [ 34%]
+test_leakguard.py::test_on_admin_can_revoke PASSED                       [ 39%]
+test_leakguard.py::test_anonymous_gets_401 PASSED                        [ 43%]
+test_leakguard.py::test_missing_csrf_rejected PASSED                     [ 47%]
+test_leakguard.py::test_double_revoke_conflict PASSED                    [ 52%]
+test_leakguard.py::test_ui_shows_button_when_on_for_owner PASSED         [ 56%]
+test_leakguard.py::test_ui_hides_button_for_member PASSED                [ 60%]
+test_leakguard.py::test_off_hides_button_and_blocks_api PASSED           [ 65%]
+test_leakguard.py::test_off_blocks_even_admin PASSED                     [ 69%]
+test_leakguard.py::test_switch_off_then_on_via_admin_api PASSED          [ 73%]
+test_leakguard.py::test_non_admin_cannot_flip_flag PASSED                [ 78%]
+test_leakguard.py::test_notify_on_grades_by_severity PASSED              [ 82%]
+test_leakguard.py::test_notify_off_everything_instant PASSED             [ 86%]
+test_leakguard.py::test_member_sees_no_other_repo_alerts PASSED          [ 91%]
+test_leakguard.py::test_audit_records_success_and_denial PASSED          [ 95%]
+test_leakguard.py::test_audit_admin_only PASSED                          [100%]
+
+============================= 23 passed in 0.84s ==============================
