@@ -147,7 +147,8 @@ def test_non_admin_cannot_flip_flag(app):
     c, t = login(app, "bob")
     r = c.post("/admin/flags/one_click_revoke", json={"enabled": False}, headers={"X-CSRF-Token": t})
     assert r.status_code == 403
-    assert json.load(open(flags.FLAGS_PATH))["one_click_revoke"]["enabled"] is True
+    with open(flags.FLAGS_PATH, encoding="utf-8") as fh:
+        assert json.load(fh)["one_click_revoke"]["enabled"] is True
 
 
 # ---------- severity_notify ----------
