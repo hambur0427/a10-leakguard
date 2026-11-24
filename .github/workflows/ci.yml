@@ -24,6 +24,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r 03_維運QA_任務3/requirements.txt
 
+      - name: Audit dependencies (pip-audit)
+        run: |
+          pip install pip-audit
+          pip-audit -r 03_維運QA_任務3/requirements.txt
+
       - name: Run tests
         working-directory: 03_維運QA_任務3
         run: pytest -q
