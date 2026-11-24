@@ -66,7 +66,7 @@ B、C 已在受邀協作者中隨機分配帳號並指派任務 issue。個人�
 2. **開分支**：從最新的 `main` 開，命名 `類型/簡短說明`，例如 `docs/collaboration-rules`、`fix/rollout-validation`。
 3. **開 PR**：照 `.github/pull_request_template.md` 填寫（做了什麼與原因、`Closes #issue`、怎麼測試、風險區域），並指定一位隊友審閱。
 4. **審閱**：留具體意見，標明 `Blocking`／`Suggestion`／`Question`／`nit`，最後核准或要求修改。**回應時間：一個工作天內。**
-5. **回應與修正**：逐則回覆審閱意見、推送修正；有核准且 CI 綠燈才合併。作者不自己核准自己的 PR。
+5. **回應與修正**：逐則回覆審閱意見、推送修正；有核准且 CI 綠燈才合併。作者不自己核准自己的 PR。核准後若又推送新的 commit，舊核准會失效（ruleset 設定 dismiss stale reviews），須重新取得核准才能合併。
 6. **機密不進 PR**：不要在 PR、issue、留言或 commit 放任何金鑰或 token。
 
 本週審閱分工：B 審 A、C 審 B、A 審 C。負責資料夾見 `.github/CODEOWNERS`。
