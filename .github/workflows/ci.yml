@@ -1,8 +1,8 @@
-name: ci
+name: ci audit negative control
 
 on:
   push:
-    branches: [main, 'task2/**']
+    branches: [validation/pip-audit-failure]
   pull_request:
   workflow_dispatch:
 
@@ -33,21 +33,3 @@ jobs:
         working-directory: 03_維運QA_任務3
         run: pytest -q
 
-  # Only trusted pushes receive the environment secret. No checkout, dependencies,
-  # or repository/PR code execute in this job, and the value is never printed.
-  staging-secret-check:
-    if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-    runs-on: ubuntu-latest
-    permissions: {}
-    environment: staging
-    steps:
-      - name: Verify staging secret injection without disclosure
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        shell: bash
-        run: |
-          if [ -z "$SECRET_KEY" ]; then
-            echo "::error::staging SECRET_KEY is missing"
-            exit 1
-          fi
-          echo "staging SECRET_KEY is available (value not displayed)"
