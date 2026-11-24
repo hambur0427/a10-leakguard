@@ -1,4 +1,4 @@
-﻿# LeakGuard — 作業 10 範例專案
+# LeakGuard — 作業 10 範例專案
 
 ```
 00_三角色計畫.md          三個角色的步驟
@@ -58,4 +58,15 @@ LeakGuard 掃描團隊 GitHub repo 中外洩的 API 金鑰或 token，通知 rep
 
 B、C 已在受邀協作者中隨機分配帳號並指派任務 issue。個人報告 issue：B #11、C #12。完整分工、交接點與時程見 [`01_PM_任務1/分工表.md`](01_PM_任務1/分工表.md)。
 
+## 協作規則（Assignment 11）
 
+`main` 受 ruleset 保護：**所有變更都要經 PR**，需要 **1 個核准**，且 CI 的 `test` 通過才能合併。
+
+1. **開 issue**：每項工作一個 issue，寫清楚負責人、完成條件、期限。
+2. **開分支**：從最新的 `main` 開，命名 `類型/簡短說明`，例如 `docs/collaboration-rules`、`fix/rollout-validation`。
+3. **開 PR**：照 `.github/pull_request_template.md` 填寫（做了什麼與原因、`Closes #issue`、怎麼測試、風險區域），並指定一位隊友審閱。
+4. **審閱**：留具體意見，標明 `Blocking`／`Suggestion`／`Question`／`nit`，最後核准或要求修改。**回應時間：一個工作天內。**
+5. **回應與修正**：逐則回覆審閱意見、推送修正；有核准且 CI 綠燈才合併。作者不自己核准自己的 PR。
+6. **機密不進 PR**：不要在 PR、issue、留言或 commit 放任何金鑰或 token。
+
+本週審閱分工：B 審 A、C 審 B、A 審 C。負責資料夾見 `.github/CODEOWNERS`。
