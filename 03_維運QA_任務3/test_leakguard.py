@@ -2,6 +2,7 @@
 import json
 import shutil
 import os
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -232,3 +233,89 @@ def test_environment_key_and_cookie_configuration(monkeypatch):
     assert instance.config["SESSION_COOKIE_HTTPONLY"] is True
     assert instance.config["SESSION_COOKIE_SAMESITE"] == "Lax"
     assert instance.config["SESSION_COOKIE_SECURE"] is True
+
+
+# Issue #16: creation-to-revocation metrics and validated rollout input.
+def test_alert_created_at_is_utc(app):
+    for alert in app.alerts:
+        created_at = datetime.fromisoformat(alert["created_at"])
+        assert created_at.utcoffset() == timedelta(0)
+        assert created_at <= datetime.now(timezone.utc)
+
+
+def test_metrics_empty(app):
+    c, _ = login(app, "alice")
+    r = c.get("/admin/metrics")
+    assert r.status_code == 200
+    assert r.get_json() == {"revoke_count": 0, "median_revoke_duration_seconds": None}
+
+
+@pytest.mark.parametrize("name", ["bob", "chen", "dana"])
+def test_metrics_non_admin_forbidden(app, name):
+    c, _ = login(app, name)
+    assert c.get("/admin/metrics").status_code == 403
+
+
+def test_metrics_anonymous_unauthorized(app):
+    assert app.test_client().get("/admin/metrics").status_code == 401
+
+
+def test_metrics_median_and_count_only_successful_revokes(app, monkeypatch):
+    now = datetime(2026, 11, 24, 12, tzinfo=timezone.utc)
+
+    class FrozenDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return now
+
+    monkeypatch.setattr("app.datetime", FrozenDatetime)
+    c, token = login(app, "bob")
+    for alert, seconds in zip(app.alerts, [10, 100, 30]):
+        alert["created_at"] = (now - timedelta(seconds=seconds)).isoformat()
+        assert post_revoke(c, token, alert["id"]).status_code == 200
+        assert alert["revoked_at"] == now.isoformat()
+        assert alert["revoke_duration_seconds"] == seconds
+        assert app.audit[-1]["revoke_duration_seconds"] == seconds
+        admin, _ = login(app, "alice")
+        expected = {1: 10, 2: 55, 3: 30}[alert["id"]]
+        assert admin.get("/admin/metrics").get_json() == {
+            "revoke_count": alert["id"], "median_revoke_duration_seconds": expected,
+        }
+    assert post_revoke(c, token, 1).status_code == 409
+    assert post_revoke(c, token, 4).status_code == 403
+    assert post_revoke(c, token, 999).status_code == 404
+    assert "revoke_duration_seconds" not in app.alerts[3]
+    assert admin.get("/admin/metrics").get_json() == {
+        "revoke_count": 3, "median_revoke_duration_seconds": 30,
+    }
+
+
+@pytest.mark.parametrize("rollout", ["abc", "", "20.5", -1, 101, 20.5, True, None, [], {}, "NaN", "Infinity"])
+def test_invalid_rollout_returns_400_without_mutation(app, rollout):
+    c, token = login(app, "alice")
+    before = flags.load_flags()
+    r = c.post("/admin/flags/one_click_revoke", json={"enabled": False, "rollout": rollout},
+               headers={"X-CSRF-Token": token})
+    assert r.status_code == 400
+    assert flags.load_flags() == before
+    assert app.audit == []
+
+
+@pytest.mark.parametrize("rollout", [0, 100, 20, "20"])
+def test_valid_rollout_accepted(app, rollout):
+    c, token = login(app, "alice")
+    r = c.post("/admin/flags/one_click_revoke", json={"rollout": rollout},
+               headers={"X-CSRF-Token": token})
+    assert r.status_code == 200
+    assert r.get_json()["rollout"] == int(rollout)
+    assert flags.load_flags()["one_click_revoke"]["rollout"] == int(rollout)
+
+
+@pytest.mark.parametrize("body", [[], [1], "invalid", 1, None])
+def test_non_object_flag_body_returns_400(app, body):
+    c, token = login(app, "alice")
+    before = flags.load_flags()
+    r = c.post("/admin/flags/one_click_revoke", data=json.dumps(body),
+               content_type="application/json", headers={"X-CSRF-Token": token})
+    assert r.status_code == 400
+    assert flags.load_flags() == before
