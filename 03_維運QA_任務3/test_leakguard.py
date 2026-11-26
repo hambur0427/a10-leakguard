@@ -270,13 +270,13 @@ def test_metrics_median_and_count_only_successful_revokes(app, monkeypatch):
 
     monkeypatch.setattr("app.datetime", FrozenDatetime)
     c, token = login(app, "bob")
+    admin, _ = login(app, "alice")
     for alert, seconds in zip(app.alerts, [10, 100, 30]):
         alert["created_at"] = (now - timedelta(seconds=seconds)).isoformat()
         assert post_revoke(c, token, alert["id"]).status_code == 200
         assert alert["revoked_at"] == now.isoformat()
         assert alert["revoke_duration_seconds"] == seconds
         assert app.audit[-1]["revoke_duration_seconds"] == seconds
-        admin, _ = login(app, "alice")
         expected = {1: 10, 2: 55, 3: 30}[alert["id"]]
         assert admin.get("/admin/metrics").get_json() == {
             "revoke_count": alert["id"], "median_revoke_duration_seconds": expected,
@@ -290,7 +290,8 @@ def test_metrics_median_and_count_only_successful_revokes(app, monkeypatch):
     }
 
 
-@pytest.mark.parametrize("rollout", ["abc", "", "20.5", -1, 101, 20.5, True, None, [], {}, "NaN", "Infinity"])
+@pytest.mark.parametrize("rollout", ["abc", "", "20.5", -1, 101, 20.5, True, None, [], {}, "NaN", "Infinity",
+                                    "1_0", " 20 ", "+20", "２０"])
 def test_invalid_rollout_returns_400_without_mutation(app, rollout):
     c, token = login(app, "alice")
     before = flags.load_flags()

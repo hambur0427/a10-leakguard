@@ -29,13 +29,16 @@ CHANNEL_WHEN_OFF = "即時（Email＋推播）"  # 開關 OFF：全部一視同�
 
 def seed_alerts():
     created_at = datetime.now(timezone.utc).isoformat()
-    return [dict(alert, created_at=created_at) for alert in [
+    alerts = [
         {"id": 1, "repo": "team/api", "type": "雲端管理金鑰", "severity": "high", "status": "open"},
         {"id": 2, "repo": "team/api", "type": "第三方 API token", "severity": "medium", "status": "open"},
         {"id": 3, "repo": "team/api", "type": "測試用 token", "severity": "low", "status": "open"},
         {"id": 4, "repo": "team/web", "type": "資料庫密碼", "severity": "high", "status": "open"},
         {"id": 5, "repo": "team/web", "type": "第三方 API token", "severity": "medium", "status": "open"},
-    ]]
+    ]
+    for alert in alerts:
+        alert["created_at"] = created_at
+    return alerts
 
 
 def channel_for(severity, severity_notify_on):

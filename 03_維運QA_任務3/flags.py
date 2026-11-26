@@ -7,6 +7,7 @@
 import hashlib
 import json
 import os
+import re
 
 FLAGS_PATH = os.environ.get(
     "FLAGS_PATH", os.path.join(os.path.dirname(__file__), "flags.json")
@@ -32,6 +33,8 @@ def set_flag(flag, enabled=None, rollout=None, path=None):
     if rollout is not None:
         if isinstance(rollout, bool) or not isinstance(rollout, (int, str)):
             raise ValueError("rollout must be an integer from 0 to 100")
+        if isinstance(rollout, str) and re.fullmatch(r"[0-9]+", rollout) is None:
+            raise ValueError("rollout must contain only ASCII digits")
         rollout = int(rollout)
         if not 0 <= rollout <= 100:
             raise ValueError("rollout must be an integer from 0 to 100")
