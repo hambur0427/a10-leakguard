@@ -8,6 +8,7 @@
 import os
 import secrets
 from datetime import datetime, timezone
+from statistics import median
 
 from flask import Flask, abort, jsonify, render_template_string, request, session
 
@@ -27,13 +28,17 @@ CHANNEL_WHEN_OFF = "即時（Email＋推播）"  # 開關 OFF：全部一視同�
 
 
 def seed_alerts():
-    return [
+    created_at = datetime.now(timezone.utc).isoformat()
+    alerts = [
         {"id": 1, "repo": "team/api", "type": "雲端管理金鑰", "severity": "high", "status": "open"},
         {"id": 2, "repo": "team/api", "type": "第三方 API token", "severity": "medium", "status": "open"},
         {"id": 3, "repo": "team/api", "type": "測試用 token", "severity": "low", "status": "open"},
         {"id": 4, "repo": "team/web", "type": "資料庫密碼", "severity": "high", "status": "open"},
         {"id": 5, "repo": "team/web", "type": "第三方 API token", "severity": "medium", "status": "open"},
     ]
+    for alert in alerts:
+        alert["created_at"] = created_at
+    return alerts
 
 
 def channel_for(severity, severity_notify_on):
@@ -173,8 +178,10 @@ def create_app(secret_key=None):
             abort(403)
         if alert["status"] != "open":
             abort(409)
-        alert["status"] = "revoked"
-        log(name, "revoke", alert=alert_id, repo=alert["repo"])
+        revoked_at = datetime.now(timezone.utc)
+        duration = (revoked_at - datetime.fromisoformat(alert["created_at"])).total_seconds()
+        alert.update(status="revoked", revoked_at=revoked_at.isoformat(), revoke_duration_seconds=duration)
+        log(name, "revoke", alert=alert_id, repo=alert["repo"], revoke_duration_seconds=duration)
         return jsonify(ok=True, alert=alert_id, checklist=rotation_checklist(alert))
 
     @app.post("/admin/flags/<flag>")
@@ -186,10 +193,28 @@ def create_app(secret_key=None):
             abort(403)
         if flag not in flags.load_flags():
             abort(404)
-        body = request.get_json(silent=True) or {}
-        result = flags.set_flag(flag, enabled=body.get("enabled"), rollout=body.get("rollout"))
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            abort(400)
+        if "rollout" in body and body["rollout"] is None:
+            abort(400)
+        try:
+            result = flags.set_flag(flag, enabled=body.get("enabled"), rollout=body.get("rollout"))
+        except (ValueError, TypeError, OverflowError):
+            abort(400)
         log(name, "flag_set", flag=flag, **result)
         return jsonify(ok=True, flag=flag, **result)
+
+    @app.get("/admin/metrics")
+    def metrics():
+        _, info = current_user()
+        if info["role"] != "admin":
+            abort(403)
+        durations = [a["revoke_duration_seconds"] for a in app.alerts if a["status"] == "revoked"]
+        return jsonify(
+            revoke_count=len(durations),
+            median_revoke_duration_seconds=median(durations) if durations else None,
+        )
 
     @app.get("/admin/audit")
     def audit():

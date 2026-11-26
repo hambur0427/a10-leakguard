@@ -7,6 +7,7 @@
 import hashlib
 import json
 import os
+import re
 
 FLAGS_PATH = os.environ.get(
     "FLAGS_PATH", os.path.join(os.path.dirname(__file__), "flags.json")
@@ -29,13 +30,21 @@ def is_on(flag, user_id, flags=None):
 
 def set_flag(flag, enabled=None, rollout=None, path=None):
     """切換開關（寫回 flags.json）。"""
+    if rollout is not None:
+        if isinstance(rollout, bool) or not isinstance(rollout, (int, str)):
+            raise ValueError("rollout must be an integer from 0 to 100")
+        if isinstance(rollout, str) and re.fullmatch(r"[0-9]+", rollout) is None:
+            raise ValueError("rollout must contain only ASCII digits")
+        rollout = int(rollout)
+        if not 0 <= rollout <= 100:
+            raise ValueError("rollout must be an integer from 0 to 100")
     path = path or FLAGS_PATH
     flags = load_flags(path)
     f = flags.setdefault(flag, {"enabled": False, "rollout": 0})
     if enabled is not None:
         f["enabled"] = bool(enabled)
     if rollout is not None:
-        f["rollout"] = max(0, min(100, int(rollout)))
+        f["rollout"] = rollout
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(flags, fh, ensure_ascii=False, indent=2)
     return f
